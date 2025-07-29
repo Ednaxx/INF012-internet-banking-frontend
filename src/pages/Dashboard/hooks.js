@@ -1,23 +1,19 @@
-import { useUserStore } from '../../store';
+import { useUserStore } from "../../store";
 
 export const useDashboard = () => {
-  const { 
-    username, 
-    accountNumber, 
-    branch, 
-    balance, 
-    logout 
-  } = useUserStore();
+  const { username, accountNumber, branch, balance, logout } = useUserStore();
 
   const handleLogout = () => {
     logout();
   };
 
   const formatBalance = (amount) => {
-    return amount?.toLocaleString('en-US', { 
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2 
-    }) || '0.00';
+    return (
+      amount?.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }) || "0.00"
+    );
   };
 
   return {
@@ -26,6 +22,6 @@ export const useDashboard = () => {
     branch,
     balance,
     handleLogout,
-    formatBalance
+    formatBalance,
   };
 };

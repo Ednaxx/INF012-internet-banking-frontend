@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router";
 import { useUserStore } from "./store";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 
 const RouterGuard = ({ children }) => {
@@ -17,14 +18,15 @@ const AppRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
 
-      <Route 
-        path="/dashboard" 
+      <Route
+        path="/dashboard"
         element={
           <RouterGuard>
             <Dashboard />
           </RouterGuard>
-        } 
+        }
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

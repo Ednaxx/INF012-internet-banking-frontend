@@ -102,6 +102,78 @@ const useUserStore = createStore(
         }
       },
 
+      // Signup API
+      signup: async (signupData) => {
+        const { username, password, email, fullName, cpf, phone } = signupData;
+
+        try {
+          set({ isLoading: true, error: null });
+
+          // Mock API call delay
+          await delay(1000);
+
+          // Mock validation
+          if (!username || !password || !email || !fullName || !cpf) {
+            throw new Error(
+              "Todos os campos obrigatórios devem ser preenchidos",
+            );
+          }
+
+          if (password.length < 6) {
+            throw new Error("A senha deve ter pelo menos 6 caracteres");
+          }
+
+          // Mock email validation
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            throw new Error("Email inválido");
+          }
+
+          // Mock CPF validation (basic)
+          if (cpf.replace(/\D/g, "").length !== 11) {
+            throw new Error("CPF deve ter 11 dígitos");
+          }
+
+          // Simulate successful signup
+          const mockAccountNumber =
+            Math.floor(Math.random() * 9000000000) + 1000000000;
+          const mockToken = `jwt-token-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+          const newUserData = {
+            username,
+            email,
+            fullName,
+            accountNumber: mockAccountNumber.toString(),
+            branch: "Agência Principal - Centro",
+            balance: 0.0,
+            cpf,
+            phone,
+          };
+
+          set({
+            token: mockToken,
+            username: newUserData.username,
+            accountNumber: newUserData.accountNumber,
+            branch: newUserData.branch,
+            balance: newUserData.balance,
+            isAuthenticated: true,
+            isAuth: true,
+            isLoading: false,
+            error: null,
+          });
+
+          return { success: true, data: newUserData };
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: error.message || "Falha no cadastro",
+            isAuthenticated: false,
+            isAuth: false,
+          });
+          return { success: false, error: error.message };
+        }
+      },
+
       // Get balance
       getBalance: async () => {
         try {
