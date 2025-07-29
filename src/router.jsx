@@ -1,7 +1,8 @@
 import { Routes, Route, Navigate } from "react-router";
 import { useUserStore } from "./store";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
-// RouterGuard component to protect routes
 const RouterGuard = ({ children }) => {
   const isAuth = useUserStore((state) => state.isAuth);
 
@@ -12,26 +13,19 @@ const RouterGuard = ({ children }) => {
   return children;
 };
 
-// Main router component
 const AppRouter = () => {
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<div>Landing/Login Page</div>} />
+      <Route path="/" element={<Login />} />
 
-      {/* Protected routes will be added here later */}
-      {/* Example of how to use RouterGuard:
       <Route 
         path="/dashboard" 
         element={
           <RouterGuard>
-            <DashboardPage />
+            <Dashboard />
           </RouterGuard>
         } 
       />
-      */}
-
-      {/* Catch all route - redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
