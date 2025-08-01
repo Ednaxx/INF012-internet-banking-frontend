@@ -9,6 +9,8 @@ export const useSignup = () => {
     confirmPassword: "",
     cpf: "",
   });
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const { signup, isLoading, error, isAuth, clearError } = useUserStore();
 
@@ -57,7 +59,10 @@ export const useSignup = () => {
 
     const result = await signup(cleanData);
 
-    if (!result.success) {
+    if (result.success) {
+      setSignupSuccess(true);
+      setSuccessMessage(result.message);
+    } else {
       console.error("Signup failed:", result.error);
     }
   };
@@ -84,6 +89,8 @@ export const useSignup = () => {
     isLoading,
     error,
     isAuth,
+    signupSuccess,
+    successMessage,
     handleInputChange,
     handleSubmit,
   };

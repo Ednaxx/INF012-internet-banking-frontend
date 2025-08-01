@@ -1,291 +1,232 @@
-import axios from "axios";
 import { createStore } from "./util";
+import useAppStore from "./app";
 
-// Mock data for demo purposes
-const MOCK_USER_DATA = {
-  name: "João Silva Santos",
-  accountNumber: "12345678",
-  branch: "001",
-};
+const api = useAppStore.getState().httpClient;
 
-const MOCK_BALANCE = 15420.5;
-
-const MOCK_TRANSACTIONS = [
-  {
-    id: "123e4567-e89b-12d3-a456-426614174001",
-    operationType: "DEPOSIT",
-    amount: 500.0,
-    description: "Depósito em dinheiro",
-    timestamp: "2025-07-30T10:30:00",
-  },
-  {
-    id: "123e4567-e89b-12d3-a456-426614174002",
-    operationType: "WITHDRAWAL",
-    amount: 200.0,
-    description: "Saque no caixa eletrônico",
-    timestamp: "2025-07-29T14:15:00",
-  },
-  {
-    id: "123e4567-e89b-12d3-a456-426614174003",
-    operationType: "TRANSFER",
-    amount: 1000.0,
-    description: "Transferência para João Santos",
-    targetAccountNumber: "98765432",
-    timestamp: "2025-07-28T09:45:00",
-  },
-];
-
-// Simulate API delay
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+api.interceptors.request.use((config) => {
+  const token = JSON.parse(localStorage.getItem("user"))?.state?.token;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 const useUserStore = createStore(
   "user",
   (set, get) => {
     return {
-      // State
       token: null,
       name: null,
       accountNumber: null,
       branch: null,
       isAuthenticated: false,
-      isAuth: false, // For router guard
+      isAuth: false,
       isLoading: false,
       error: null,
 
-      // Actions
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
 
-      // Authentication API
       authenticate: async (credentials) => {
         const { accountNumber, branch, password } = credentials;
 
         try {
           set({ isLoading: true, error: null });
 
-          // Mock API call delay
-          await delay(800);
-
-          // Mock authentication - in real app, this would be a POST to /auth/login
-          if (accountNumber && branch && password) {
-            // Simulate successful login
-            const mockToken = `jwt-token-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-            set({
-              token: mockToken,
-              name: MOCK_USER_DATA.name,
-              accountNumber: MOCK_USER_DATA.accountNumber,
-              branch: MOCK_USER_DATA.branch,
-              isAuthenticated: true,
-              isAuth: true,
-              isLoading: false,
-              error: null,
-            });
-
-            return { success: true, data: MOCK_USER_DATA };
-          } else {
-            throw new Error("Invalid credentials");
-          }
-        } catch (error) {
-          set({
-            isLoading: false,
-            error: error.message || "Authentication failed",
-            isAuthenticated: false,
-            isAuth: false,
+          const response = await api.post("/auth", {
+            accountNumber,
+            branch,
+            password,
           });
-          return { success: false, error: error.message };
-        }
-      },
 
-      // Signup API
-      signup: async (signupData) => {
-        const { name, cpf, email, password } = signupData;
-
-        try {
-          set({ isLoading: true, error: null });
-
-          // Mock API call delay
-          await delay(1000);
-
-          // Mock validation
-          if (!name || !password || !email || !cpf) {
-            throw new Error(
-              "Todos os campos obrigatórios devem ser preenchidos",
-            );
-          }
-
-          if (password.length < 6) {
-            throw new Error("A senha deve ter pelo menos 6 caracteres");
-          }
-
-          // Mock email validation
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(email)) {
-            throw new Error("Email inválido");
-          }
-
-          // Mock CPF validation (basic)
-          if (cpf.replace(/\D/g, "").length !== 11) {
-            throw new Error("CPF deve ter 11 dígitos");
-          }
-
-          // Simulate successful signup
-          const mockAccountNumber =
-            Math.floor(Math.random() * 90000000) + 10000000;
-          const mockBranch = String(
-            Math.floor(Math.random() * 999) + 1,
-          ).padStart(3, "0");
-          const mockToken = `jwt-token-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-          const newUserData = {
+          const {
+            token,
             name,
-            email,
-            accountNumber: mockAccountNumber.toString(),
-            branch: mockBranch,
-            balance: 0.0,
-            cpf,
-          };
+            accountNumber: accNum,
+            branch: branchNum,
+          } = response.data;
 
           set({
-            token: mockToken,
-            name: newUserData.name,
-            accountNumber: newUserData.accountNumber,
-            branch: newUserData.branch,
+            token,
+            name,
+            accountNumber: accNum,
+            branch: branchNum,
             isAuthenticated: true,
             isAuth: true,
             isLoading: false,
             error: null,
           });
 
-          return { success: true, data: newUserData };
+          return { success: true, data: response.data };
         } catch (error) {
+          const errorMessage =
+            error.response?.status == 401
+              ? "Credenciais inválidas"
+              : "Falha na autenticação";
           set({
             isLoading: false,
-            error: error.message || "Falha no cadastro",
+            error: errorMessage,
             isAuthenticated: false,
             isAuth: false,
           });
-          return { success: false, error: error.message };
+          return { success: false, error: errorMessage };
         }
       },
 
-      // Get balance
+      signup: async (signupData) => {
+        const { name, cpf, email, password } = signupData;
+
+        try {
+          set({ isLoading: true, error: null });
+
+          const response = await api.post("/users", {
+            name,
+            cpf: cpf.replace(/\D/g, ""),
+            email,
+            password,
+          });
+
+          set({ isLoading: false });
+
+          return {
+            success: true,
+            data: response.data,
+            message:
+              "Conta criada com sucesso! Um email com as informações da sua conta foi enviado.",
+          };
+        } catch (error) {
+          let errorMessage;
+
+          if (
+            error.response?.data?.message.includes("CPF already registered")
+          ) {
+            errorMessage = "Usuário já cadastrado";
+          } else if (
+            error.response?.data?.message.includes("Email already registered")
+          ) {
+            errorMessage = "Email já cadastrado";
+          } else {
+            errorMessage = "Falha no cadastro";
+          }
+
+          set({
+            isLoading: false,
+            error: errorMessage,
+            isAuthenticated: false,
+            isAuth: false,
+          });
+          return { success: false, error: errorMessage };
+        }
+      },
+
       getBalance: async () => {
         try {
           const { token } = get();
           if (!token) {
-            throw new Error("No authentication token");
+            throw new Error("Token de autenticação não encontrado");
           }
 
-          // Mock API call delay
-          await delay(300);
+          const response = await api.get("/accounts/balance");
 
           return {
             success: true,
-            balance: MOCK_BALANCE,
+            balance: response.data.balance,
+            accountNumber: response.data.accountNumber,
+            branch: response.data.branch,
           };
         } catch (error) {
+          const errorMessage =
+            error.response?.data?.message || "Falha ao obter saldo";
           return {
             success: false,
-            error: error.message || "Failed to fetch balance",
+            error: errorMessage,
           };
         }
       },
 
-      // Deposit money
       deposit: async (amount, description = null) => {
         try {
           set({ isLoading: true, error: null });
 
           const { token } = get();
           if (!token) {
-            throw new Error("No authentication token");
+            throw new Error("Token de autenticação não encontrado");
           }
 
-          if (!amount || amount <= 0) {
-            throw new Error("Invalid deposit amount");
-          }
-
-          // Mock API call delay
-          await delay(1000);
-
-          const transaction = {
-            id: `dep_${Date.now()}`,
-            operationType: "DEPOSIT",
+          const response = await api.post("/accounts/deposit", {
             amount: parseFloat(amount),
             description: description || "Depósito em dinheiro",
-            timestamp: new Date().toISOString(),
-          };
+          });
 
           set({ isLoading: false });
 
           return {
             success: true,
-            transaction,
-            newBalance: MOCK_BALANCE + parseFloat(amount),
+            transaction: {
+              id: response.data.id,
+              operationType: response.data.type,
+              amount: response.data.amount,
+              description: response.data.description,
+              timestamp: response.data.createdAt,
+            },
+            newBalance: response.data.newBalance,
           };
         } catch (error) {
+          const errorMessage =
+            error.response?.data?.message || "Falha no depósito";
           set({
             isLoading: false,
-            error: error.message || "Deposit failed",
+            error: errorMessage,
           });
           return {
             success: false,
-            error: error.message,
+            error: errorMessage,
           };
         }
       },
 
-      // Withdraw money
       withdraw: async (amount, description = null) => {
         try {
           set({ isLoading: true, error: null });
 
           const { token } = get();
           if (!token) {
-            throw new Error("No authentication token");
+            throw new Error("Token de autenticação não encontrado");
           }
 
-          if (!amount || amount <= 0) {
-            throw new Error("Invalid withdrawal amount");
-          }
-
-          if (parseFloat(amount) > MOCK_BALANCE) {
-            throw new Error("Insufficient funds");
-          }
-
-          // Mock API call delay
-          await delay(1000);
-
-          const transaction = {
-            id: `wit_${Date.now()}`,
-            operationType: "WITHDRAWAL",
+          const response = await api.post("/accounts/withdraw", {
             amount: parseFloat(amount),
             description: description || "Saque em dinheiro",
-            timestamp: new Date().toISOString(),
-          };
+          });
 
           set({ isLoading: false });
 
           return {
             success: true,
-            transaction,
-            newBalance: MOCK_BALANCE - parseFloat(amount),
+            transaction: {
+              id: response.data.id,
+              operationType: response.data.type,
+              amount: response.data.amount,
+              description: response.data.description,
+              timestamp: response.data.createdAt,
+            },
+            newBalance: response.data.newBalance,
           };
         } catch (error) {
+          const errorMessage =
+            error.response?.data?.message || "Falha no saque";
           set({
             isLoading: false,
-            error: error.message || "Withdrawal failed",
+            error: errorMessage,
           });
           return {
             success: false,
-            error: error.message,
+            error: errorMessage,
           };
         }
       },
 
-      // Transfer money (Payment)
       transfer: async (transferData) => {
         const { targetAccountNumber, targetBranch, amount, description } =
           transferData;
@@ -295,89 +236,86 @@ const useUserStore = createStore(
 
           const { token } = get();
           if (!token) {
-            throw new Error("No authentication token");
+            throw new Error("Token de autenticação não encontrado");
           }
 
-          if (!amount || amount <= 0) {
-            throw new Error("Invalid transfer amount");
-          }
-
-          if (!targetAccountNumber || !targetBranch) {
-            throw new Error("Target account number and branch are required");
-          }
-
-          if (parseFloat(amount) > MOCK_BALANCE) {
-            throw new Error("Insufficient funds");
-          }
-
-          // Mock API call delay
-          await delay(1200);
-
-          const transaction = {
-            id: `tra_${Date.now()}`,
-            operationType: "TRANSFER",
+          const response = await api.post("/accounts/payment", {
+            receiverUsername: `${targetBranch}-${targetAccountNumber}`,
             amount: parseFloat(amount),
             description:
               description || `Transferência para conta ${targetAccountNumber}`,
-            targetAccountNumber,
-            targetBranch,
-            timestamp: new Date().toISOString(),
-          };
+          });
 
           set({ isLoading: false });
 
           return {
             success: true,
-            transaction,
-            newBalance: MOCK_BALANCE - parseFloat(amount),
+            transaction: {
+              id: response.data.id,
+              operationType: response.data.type,
+              amount: response.data.amount,
+              description: response.data.description,
+              targetAccountNumber,
+              targetBranch,
+              timestamp: response.data.createdAt,
+            },
+            newBalance: response.data.newBalance,
           };
         } catch (error) {
+          const errorMessage =
+            error.response?.data?.message || "Falha na transferência";
           set({
             isLoading: false,
-            error: error.message || "Transfer failed",
+            error: errorMessage,
           });
           return {
             success: false,
-            error: error.message,
+            error: errorMessage,
           };
         }
       },
 
-      // Get account statement
       getStatement: async () => {
         try {
           set({ isLoading: true, error: null });
 
-          const { token, accountNumber, branch } = get();
+          const { token } = get();
           if (!token) {
-            throw new Error("No authentication token");
+            throw new Error("Token de autenticação não encontrado");
           }
 
-          // Mock API call delay
-          await delay(800);
+          const response = await api.get("/accounts/statement");
 
           set({ isLoading: false });
 
           return {
             success: true,
-            accountNumber,
-            branch,
-            currentBalance: MOCK_BALANCE,
-            operations: MOCK_TRANSACTIONS,
+            accountNumber: response.data.accountNumber,
+            branch: response.data.branch,
+            currentBalance: response.data.currentBalance,
+            operations: response.data.operations.map((op) => ({
+              id: op.id,
+              operationType: op.type,
+              amount: op.amount,
+              description: op.description,
+              timestamp: op.createdAt,
+              receiverUsername: op.receiverUsername,
+            })),
           };
         } catch (error) {
+          const errorMessage =
+            error.response?.data?.message || "Falha ao buscar extrato";
           set({
             isLoading: false,
-            error: error.message || "Failed to fetch statement",
+            error: errorMessage,
           });
           return {
             success: false,
-            error: error.message,
+            error: errorMessage,
           };
         }
       },
 
-      // Logout
       logout: () => {
         set({
           token: null,
@@ -391,33 +329,28 @@ const useUserStore = createStore(
         });
       },
 
-      // Initialize user data (for when token exists in localStorage)
       initializeUser: async () => {
         const { token } = get();
         if (token) {
           try {
             set({ isLoading: true });
 
-            // Mock API call to verify token and get user data
-            await delay(500);
+            await api.get("/accounts/balance");
 
             set({
-              name: MOCK_USER_DATA.name,
-              accountNumber: MOCK_USER_DATA.accountNumber,
-              branch: MOCK_USER_DATA.branch,
               isAuthenticated: true,
               isAuth: true,
               isLoading: false,
             });
           } catch (error) {
-            // Token might be invalid, logout
             get().logout();
+            set({ isLoading: false });
           }
         }
       },
     };
   },
-  true, // Enable persistence for the store
+  true,
 );
 
 export { useUserStore };

@@ -1,6 +1,10 @@
 import React from "react";
 import { Navigate, Link } from "react-router";
-import { FaUniversity, FaExclamationCircle } from "react-icons/fa";
+import {
+  FaUniversity,
+  FaExclamationCircle,
+  FaCheckCircle,
+} from "react-icons/fa";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSignup } from "./hooks";
 
@@ -10,12 +14,55 @@ const Signup = () => {
     isLoading,
     error,
     isAuth,
+    signupSuccess,
+    successMessage,
     handleInputChange,
     handleSubmit,
   } = useSignup();
 
   if (isAuth) {
     return <Navigate to="/dashboard" replace />;
+  }
+
+  // Show success screen after successful signup
+  if (signupSuccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 flex items-center justify-center p-4">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 bg-white rounded-full flex items-center justify-center mb-4">
+              <FaUniversity className="h-8 w-8 text-blue-600" />
+            </div>
+            <h2 className="text-3xl font-bold text-white">InternetBanking</h2>
+            <p className="mt-2 text-blue-200">Conta criada com sucesso!</p>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-xl p-8 text-center">
+            <FaCheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">
+              Conta criada com sucesso!
+            </h3>
+            <p className="text-gray-600 mb-6">{successMessage}</p>
+            <p className="text-sm text-gray-500 mb-6">
+              Verifique sua caixa de entrada e spam para encontrar o email com
+              as informações da sua conta.
+            </p>
+            <Link
+              to="/"
+              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            >
+              Voltar para o Login
+            </Link>
+          </div>
+
+          <div className="text-center">
+            <p className="text-sm text-blue-200">
+              © 2025 SecureBank. Todos os direitos reservados.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
