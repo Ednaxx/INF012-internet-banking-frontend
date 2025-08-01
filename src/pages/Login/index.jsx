@@ -1,7 +1,7 @@
-import React from 'react';
-import { Navigate } from 'react-router';
-import { useLogin } from './hooks';
-import { LoginHeader, LoginForm, LoginExtras } from '../../components/Login';
+import React from "react";
+import { Navigate } from "react-router";
+import { useLogin } from "./hooks";
+import { LoginHeader, LoginForm, LoginExtras } from "../../components/Login";
 
 const Login = () => {
   const {
@@ -31,7 +31,7 @@ const Login = () => {
             handleInputChange={handleInputChange}
             handleSubmit={handleSubmit}
           />
-          
+
           <LoginExtras
             handleDemoLogin={handleDemoLogin}
             isLoading={isLoading}

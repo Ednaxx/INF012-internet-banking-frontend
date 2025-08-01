@@ -1,8 +1,8 @@
-import React from 'react';
-import { Navigate } from 'react-router';
-import { useWithdrawal } from './hooks';
-import { PageHeader, BalanceCard, AlertMessage } from '../../components/shared';
-import { WithdrawalForm } from '../../components/Withdrawal';
+import React from "react";
+import { Navigate } from "react-router";
+import { useWithdrawal } from "./hooks";
+import { PageHeader, BalanceCard, AlertMessage } from "../../components/shared";
+import { WithdrawalForm } from "../../components/Withdrawal";
 
 const Withdrawal = () => {
   const {
@@ -23,11 +23,7 @@ const Withdrawal = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <PageHeader 
-        title="InternetBanking" 
-        showBackButton
-        onBack={handleBack}
-      />
+      <PageHeader title="InternetBanking" showBackButton onBack={handleBack} />
 
       <main className="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
@@ -41,16 +37,16 @@ const Withdrawal = () => {
           <BalanceCard balance={balance} formatCurrency={formatCurrency} />
 
           {success && withdrawalResult && (
-            <AlertMessage 
-              type="success" 
+            <AlertMessage
+              type="success"
               title="Saque realizado com sucesso!"
               message={`Valor sacado: ${formatCurrency(withdrawalResult.transaction.amount)}. Novo saldo: ${formatCurrency(withdrawalResult.newBalance)}`}
             />
           )}
 
           {isInsufficientFunds() && (
-            <AlertMessage 
-              type="warning" 
+            <AlertMessage
+              type="warning"
               message="Valor solicitado excede o saldo disponível"
             />
           )}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaUniversity } from 'react-icons/fa';
+import React from "react";
+import { FaUniversity } from "react-icons/fa";
 
 const LoginHeader = () => {
   return (

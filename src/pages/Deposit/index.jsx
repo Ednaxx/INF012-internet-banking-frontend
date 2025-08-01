@@ -1,8 +1,8 @@
-import React from 'react';
-import { FaPlus } from 'react-icons/fa';
-import { useDeposit } from './hooks';
-import { PageHeader, BalanceCard, AlertMessage } from '../../components/shared';
-import { DepositForm } from '../../components/Deposit';
+import React from "react";
+import { FaPlus } from "react-icons/fa";
+import { useDeposit } from "./hooks";
+import { PageHeader, BalanceCard, AlertMessage } from "../../components/shared";
+import { DepositForm } from "../../components/Deposit";
 
 const Deposit = () => {
   const {
@@ -22,11 +22,7 @@ const Deposit = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <PageHeader 
-        title="InternetBanking" 
-        showBackButton 
-        onBack={handleBack} 
-      />
+      <PageHeader title="InternetBanking" showBackButton onBack={handleBack} />
 
       <main className="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
@@ -52,7 +48,8 @@ const Deposit = () => {
                     Depósito realizado com sucesso!
                   </h3>
                   <p className="text-sm text-green-700 mt-1">
-                    Valor depositado: {formatCurrency(depositResult.transaction.amount)}
+                    Valor depositado:{" "}
+                    {formatCurrency(depositResult.transaction.amount)}
                   </p>
                   <p className="text-sm text-green-700">
                     Novo saldo: {formatCurrency(depositResult.newBalance)}

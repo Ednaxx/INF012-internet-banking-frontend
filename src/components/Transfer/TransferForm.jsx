@@ -1,19 +1,19 @@
-import React from 'react';
-import { FaExchangeAlt } from 'react-icons/fa';
-import { FormInput, LoadingButton, AlertMessage } from '../shared';
+import React from "react";
+import { FaExchangeAlt } from "react-icons/fa";
+import { FormInput, LoadingButton, AlertMessage } from "../shared";
 
-const TransferForm = ({ 
-  amount, 
-  setAmount, 
+const TransferForm = ({
+  amount,
+  setAmount,
   targetAccountNumber,
   setTargetAccountNumber,
   targetBranch,
   setTargetBranch,
-  description, 
-  setDescription, 
-  onSubmit, 
-  loading, 
-  error 
+  description,
+  setDescription,
+  onSubmit,
+  loading,
+  error,
 }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
@@ -40,7 +40,7 @@ const TransferForm = ({
             maxLength={4}
             required
           />
-          
+
           <FormInput
             id="targetAccountNumber"
             label="Conta de Destino"

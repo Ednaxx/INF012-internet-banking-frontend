@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUserStore } from "../../store";
 
 export const useTransfer = () => {
   const navigate = useNavigate();
-  const { transfer, isLoading, error, balance } = useUserStore();
+  const { transfer, getBalance, isLoading, error } = useUserStore();
   const [formData, setFormData] = useState({
     targetAccountNumber: "",
     targetBranch: "",
@@ -13,25 +13,40 @@ export const useTransfer = () => {
   });
   const [success, setSuccess] = useState(false);
   const [transferResult, setTransferResult] = useState(null);
+  const [balance, setBalance] = useState(0);
+  const [balanceLoading, setBalanceLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      setBalanceLoading(true);
+      const result = await getBalance();
+      if (result.success) {
+        setBalance(result.balance);
+      }
+      setBalanceLoading(false);
+    };
+
+    fetchBalance();
+  }, [getBalance]);
 
   const handleInputChange = (field, value) => {
     if (field === "amount") {
       // Allow only numbers and decimal point
       if (/^\d*\.?\d*$/.test(value)) {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        setFormData((prev) => ({ ...prev, [field]: value }));
       }
     } else if (field === "targetAccountNumber") {
       // Allow only numbers for account
       if (/^\d*$/.test(value)) {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        setFormData((prev) => ({ ...prev, [field]: value }));
       }
     } else if (field === "targetBranch") {
       // Allow only numbers for branch
       if (/^\d*$/.test(value)) {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        setFormData((prev) => ({ ...prev, [field]: value }));
       }
     } else {
-      setFormData(prev => ({ ...prev, [field]: value }));
+      setFormData((prev) => ({ ...prev, [field]: value }));
     }
   };
 
@@ -40,7 +55,12 @@ export const useTransfer = () => {
     setSuccess(false);
     setTransferResult(null);
 
-    if (!formData.amount || parseFloat(formData.amount) <= 0 || !formData.targetAccountNumber || !formData.targetBranch) {
+    if (
+      !formData.amount ||
+      parseFloat(formData.amount) <= 0 ||
+      !formData.targetAccountNumber ||
+      !formData.targetBranch
+    ) {
       return;
     }
 
@@ -48,11 +68,13 @@ export const useTransfer = () => {
       targetAccountNumber: formData.targetAccountNumber,
       targetBranch: formData.targetBranch,
       amount: parseFloat(formData.amount),
-      description: formData.description || `Transferência para conta ${formData.targetAccountNumber}`,
+      description:
+        formData.description ||
+        `Transferência para conta ${formData.targetAccountNumber}`,
     };
 
     const result = await transfer(transferData);
-    
+
     if (result.success) {
       setSuccess(true);
       setTransferResult(result);
@@ -62,8 +84,12 @@ export const useTransfer = () => {
         amount: "",
         description: "",
       });
-      
-      // Auto-hide success message after 5 seconds
+
+      const balanceResult = await getBalance();
+      if (balanceResult.success) {
+        setBalance(balanceResult.balance);
+      }
+
       setTimeout(() => {
         setSuccess(false);
         setTransferResult(null);
@@ -76,10 +102,12 @@ export const useTransfer = () => {
   };
 
   const formatCurrency = (value) => {
-    return value?.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }) || "R$ 0,00";
+    return (
+      value?.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }) || "R$ 0,00"
+    );
   };
 
   const isInsufficientFunds = () => {
@@ -98,7 +126,7 @@ export const useTransfer = () => {
 
   return {
     formData,
-    isLoading,
+    isLoading: isLoading || balanceLoading,
     error,
     success,
     transferResult,

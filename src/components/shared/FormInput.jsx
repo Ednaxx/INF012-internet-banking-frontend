@@ -1,36 +1,37 @@
-import React from 'react';
+import React from "react";
 
-const FormInput = ({ 
-  label, 
-  id, 
-  name, 
-  type = "text", 
-  value, 
-  onChange, 
-  placeholder, 
-  icon: Icon, 
-  required = false, 
+const FormInput = ({
+  label,
+  id,
+  name,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  icon: Icon,
+  required = false,
   disabled = false,
   autoComplete,
   maxLength,
   rows,
-  className = ""
+  className = "",
 }) => {
-  const baseInputClass = "appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm";
+  const baseInputClass =
+    "appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm";
   const inputClass = `${baseInputClass} ${className}`;
 
-  const InputComponent = type === 'textarea' ? 'textarea' : 'input';
+  const InputComponent = type === "textarea" ? "textarea" : "input";
 
   return (
     <div>
       <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-        {label} {required && '*'}
+        {label} {required && "*"}
       </label>
       <div className="mt-1 relative">
         <InputComponent
           id={id}
           name={name}
-          type={type === 'textarea' ? undefined : type}
+          type={type === "textarea" ? undefined : type}
           autoComplete={autoComplete}
           required={required}
           value={value}

@@ -1,14 +1,14 @@
-import React from 'react';
-import { FaArrowUp, FaArrowDown, FaExchangeAlt } from 'react-icons/fa';
+import React from "react";
+import { FaArrowUp, FaArrowDown, FaExchangeAlt } from "react-icons/fa";
 
 const TransactionItem = ({ transaction, formatCurrency, formatDate }) => {
   const getTransactionIcon = (type) => {
     switch (type) {
-      case 'DEPOSIT':
+      case "DEPOSIT":
         return <FaArrowUp className="text-green-600" />;
-      case 'WITHDRAWAL':
+      case "WITHDRAWAL":
         return <FaArrowDown className="text-red-600" />;
-      case 'TRANSFER':
+      case "TRANSFER":
         return <FaExchangeAlt className="text-blue-600" />;
       default:
         return <FaExchangeAlt className="text-gray-600" />;
@@ -17,31 +17,31 @@ const TransactionItem = ({ transaction, formatCurrency, formatDate }) => {
 
   const getTransactionLabel = (type) => {
     switch (type) {
-      case 'DEPOSIT':
-        return 'Depósito';
-      case 'WITHDRAWAL':
-        return 'Saque';
-      case 'TRANSFER':
-        return 'Transferência';
+      case "DEPOSIT":
+        return "Depósito";
+      case "WITHDRAWAL":
+        return "Saque";
+      case "TRANSFER":
+        return "Transferência";
       default:
-        return 'Operação';
+        return "Operação";
     }
   };
 
   const getAmountColor = (type) => {
     switch (type) {
-      case 'DEPOSIT':
-        return 'text-green-600';
-      case 'WITHDRAWAL':
-      case 'TRANSFER':
-        return 'text-red-600';
+      case "DEPOSIT":
+        return "text-green-600";
+      case "WITHDRAWAL":
+      case "TRANSFER":
+        return "text-red-600";
       default:
-        return 'text-gray-600';
+        return "text-gray-600";
     }
   };
 
   const getAmountPrefix = (type) => {
-    return type === 'DEPOSIT' ? '+' : '-';
+    return type === "DEPOSIT" ? "+" : "-";
   };
 
   return (
@@ -65,8 +65,11 @@ const TransactionItem = ({ transaction, formatCurrency, formatDate }) => {
         </div>
       </div>
       <div className="text-right">
-        <p className={`font-semibold ${getAmountColor(transaction.operationType)}`}>
-          {getAmountPrefix(transaction.operationType)}{formatCurrency(transaction.amount)}
+        <p
+          className={`font-semibold ${getAmountColor(transaction.operationType)}`}
+        >
+          {getAmountPrefix(transaction.operationType)}
+          {formatCurrency(transaction.amount)}
         </p>
         {transaction.targetAccountNumber && (
           <p className="text-sm text-gray-500">
@@ -78,7 +81,12 @@ const TransactionItem = ({ transaction, formatCurrency, formatDate }) => {
   );
 };
 
-const TransactionList = ({ transactions, formatCurrency, formatDate, isLoading }) => {
+const TransactionList = ({
+  transactions,
+  formatCurrency,
+  formatDate,
+  isLoading,
+}) => {
   if (isLoading) {
     return (
       <div className="bg-white rounded-xl shadow-lg p-6">
@@ -118,7 +126,9 @@ const TransactionList = ({ transactions, formatCurrency, formatDate, isLoading }
           Histórico de Transações
         </h2>
         <p className="text-gray-600 text-sm mt-1">
-          {transactions.length} transação{transactions.length !== 1 ? 'ões' : ''} encontrada{transactions.length !== 1 ? 's' : ''}
+          {transactions.length} transação
+          {transactions.length !== 1 ? "ões" : ""} encontrada
+          {transactions.length !== 1 ? "s" : ""}
         </p>
       </div>
       <div className="divide-y divide-gray-100">

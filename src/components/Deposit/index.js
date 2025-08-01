@@ -1,1 +1,1 @@
-export { default as DepositForm } from './DepositForm';
+export { default as DepositForm } from "./DepositForm";

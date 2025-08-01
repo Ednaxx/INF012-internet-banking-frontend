@@ -1,5 +1,11 @@
-import React from 'react';
-import { FaUniversity, FaPlus, FaMinus, FaExchangeAlt, FaFileAlt } from 'react-icons/fa';
+import React from "react";
+import {
+  FaUniversity,
+  FaPlus,
+  FaMinus,
+  FaExchangeAlt,
+  FaFileAlt,
+} from "react-icons/fa";
 import { useDashboard } from "./hooks";
 
 const Dashboard = () => {
@@ -18,7 +24,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
@@ -26,7 +31,9 @@ const Dashboard = () => {
               <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
                 <FaUniversity className="h-5 w-5 text-white" />
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">InternetBanking</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                InternetBanking
+              </h1>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-gray-700">Bem-vindo, {username}</span>
@@ -75,7 +82,7 @@ const Dashboard = () => {
                 Ações Rápidas
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <button 
+                <button
                   onClick={handleNavigateToDeposit}
                   className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-center transition-colors duration-200"
                 >
@@ -85,7 +92,7 @@ const Dashboard = () => {
                   <p className="text-sm font-medium text-blue-900">Depósito</p>
                 </button>
 
-                <button 
+                <button
                   onClick={handleNavigateToWithdrawal}
                   className="bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-4 text-center transition-colors duration-200"
                 >
@@ -95,7 +102,7 @@ const Dashboard = () => {
                   <p className="text-sm font-medium text-green-900">Saque</p>
                 </button>
 
-                <button 
+                <button
                   onClick={handleNavigateToTransfer}
                   className="bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg p-4 text-center transition-colors duration-200"
                 >
@@ -107,7 +114,7 @@ const Dashboard = () => {
                   </p>
                 </button>
 
-                <button 
+                <button
                   onClick={handleNavigateToStatement}
                   className="bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-4 text-center transition-colors duration-200"
                 >

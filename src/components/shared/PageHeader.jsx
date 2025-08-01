@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaUniversity, FaArrowLeft } from 'react-icons/fa';
+import React from "react";
+import { FaUniversity, FaArrowLeft } from "react-icons/fa";
 
 const PageHeader = ({ title, subtitle, showBackButton, onBack, children }) => {
   return (

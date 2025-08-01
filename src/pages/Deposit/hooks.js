@@ -1,14 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUserStore } from "../../store";
 
 export const useDeposit = () => {
   const navigate = useNavigate();
-  const { deposit, isLoading, error, balance, formatBalance } = useUserStore();
+  const { deposit, getBalance, isLoading, error } = useUserStore();
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [success, setSuccess] = useState(false);
   const [depositResult, setDepositResult] = useState(null);
+  const [balance, setBalance] = useState(0);
+  const [balanceLoading, setBalanceLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      setBalanceLoading(true);
+      const result = await getBalance();
+      if (result.success) {
+        setBalance(result.balance);
+      }
+      setBalanceLoading(false);
+    };
+
+    fetchBalance();
+  }, [getBalance]);
 
   const handleAmountChange = (e) => {
     const value = e.target.value;
@@ -28,14 +43,18 @@ export const useDeposit = () => {
     }
 
     const result = await deposit(parseFloat(amount), description);
-    
+
     if (result.success) {
       setSuccess(true);
       setDepositResult(result);
       setAmount("");
       setDescription("");
-      
-      // Auto-hide success message after 3 seconds
+
+      const balanceResult = await getBalance();
+      if (balanceResult.success) {
+        setBalance(balanceResult.balance);
+      }
+
       setTimeout(() => {
         setSuccess(false);
         setDepositResult(null);
@@ -48,16 +67,18 @@ export const useDeposit = () => {
   };
 
   const formatCurrency = (value) => {
-    return value?.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }) || "R$ 0,00";
+    return (
+      value?.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }) || "R$ 0,00"
+    );
   };
 
   return {
     amount,
     description,
-    isLoading,
+    isLoading: isLoading || balanceLoading,
     error,
     success,
     depositResult,
@@ -67,6 +88,5 @@ export const useDeposit = () => {
     handleSubmit,
     handleBack,
     formatCurrency,
-    formatBalance,
   };
 };

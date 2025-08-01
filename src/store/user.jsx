@@ -6,33 +6,32 @@ const MOCK_USER_DATA = {
   name: "João Silva Santos",
   accountNumber: "12345678",
   branch: "001",
-  balance: 15420.50,
 };
+
+const MOCK_BALANCE = 15420.5;
 
 const MOCK_TRANSACTIONS = [
   {
     id: "123e4567-e89b-12d3-a456-426614174001",
-    type: "DEPOSIT",
+    operationType: "DEPOSIT",
     amount: 500.0,
-    description: "Salary deposit",
-    createdAt: "2025-07-28T10:30:00",
-    newBalance: 15420.5,
+    description: "Depósito em dinheiro",
+    timestamp: "2025-07-30T10:30:00",
   },
   {
     id: "123e4567-e89b-12d3-a456-426614174002",
-    type: "WITHDRAWAL",
+    operationType: "WITHDRAWAL",
     amount: 200.0,
-    description: "ATM withdrawal",
-    createdAt: "2025-07-27T14:15:00",
-    newBalance: 14920.5,
+    description: "Saque no caixa eletrônico",
+    timestamp: "2025-07-29T14:15:00",
   },
   {
     id: "123e4567-e89b-12d3-a456-426614174003",
-    type: "PAYMENT",
+    operationType: "TRANSFER",
     amount: 1000.0,
-    description: "Transfer to John Smith",
-    createdAt: "2025-07-26T09:45:00",
-    newBalance: 15120.5,
+    description: "Transferência para João Santos",
+    targetAccountNumber: "98765432",
+    timestamp: "2025-07-28T09:45:00",
   },
 ];
 
@@ -48,12 +47,10 @@ const useUserStore = createStore(
       name: null,
       accountNumber: null,
       branch: null,
-      balance: null,
       isAuthenticated: false,
       isAuth: false, // For router guard
       isLoading: false,
       error: null,
-      transactions: [],
 
       // Actions
       setLoading: (loading) => set({ isLoading: loading }),
@@ -80,7 +77,6 @@ const useUserStore = createStore(
               name: MOCK_USER_DATA.name,
               accountNumber: MOCK_USER_DATA.accountNumber,
               branch: MOCK_USER_DATA.branch,
-              balance: MOCK_USER_DATA.balance,
               isAuthenticated: true,
               isAuth: true,
               isLoading: false,
@@ -137,7 +133,9 @@ const useUserStore = createStore(
           // Simulate successful signup
           const mockAccountNumber =
             Math.floor(Math.random() * 90000000) + 10000000;
-          const mockBranch = String(Math.floor(Math.random() * 999) + 1).padStart(3, '0');
+          const mockBranch = String(
+            Math.floor(Math.random() * 999) + 1,
+          ).padStart(3, "0");
           const mockToken = `jwt-token-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
           const newUserData = {
@@ -154,7 +152,6 @@ const useUserStore = createStore(
             name: newUserData.name,
             accountNumber: newUserData.accountNumber,
             branch: newUserData.branch,
-            balance: newUserData.balance,
             isAuthenticated: true,
             isAuth: true,
             isLoading: false,
@@ -176,32 +173,23 @@ const useUserStore = createStore(
       // Get balance
       getBalance: async () => {
         try {
-          set({ isLoading: true, error: null });
-
           const { token } = get();
           if (!token) {
             throw new Error("No authentication token");
           }
 
           // Mock API call delay
-          await delay(500);
+          await delay(300);
 
-          // Mock successful balance fetch
-          const updatedBalance =
-            MOCK_USER_DATA.balance + (Math.random() - 0.5) * 100;
-
-          set({
-            balance: updatedBalance,
-            isLoading: false,
-          });
-
-          return { success: true, balance: updatedBalance };
+          return {
+            success: true,
+            balance: MOCK_BALANCE,
+          };
         } catch (error) {
-          set({
-            isLoading: false,
+          return {
+            success: false,
             error: error.message || "Failed to fetch balance",
-          });
-          return { success: false, error: error.message };
+          };
         }
       },
 
@@ -210,7 +198,7 @@ const useUserStore = createStore(
         try {
           set({ isLoading: true, error: null });
 
-          const { token, balance } = get();
+          const { token } = get();
           if (!token) {
             throw new Error("No authentication token");
           }
@@ -222,29 +210,30 @@ const useUserStore = createStore(
           // Mock API call delay
           await delay(1000);
 
-          const newBalance = balance + parseFloat(amount);
           const transaction = {
-            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            type: "DEPOSIT",
+            id: `dep_${Date.now()}`,
+            operationType: "DEPOSIT",
             amount: parseFloat(amount),
-            description: description || "Cash deposit",
-            createdAt: new Date().toISOString(),
-            newBalance: newBalance,
+            description: description || "Depósito em dinheiro",
+            timestamp: new Date().toISOString(),
           };
 
-          set((state) => ({
-            balance: newBalance,
-            transactions: [transaction, ...state.transactions],
-            isLoading: false,
-          }));
+          set({ isLoading: false });
 
-          return { success: true, transaction, newBalance };
+          return {
+            success: true,
+            transaction,
+            newBalance: MOCK_BALANCE + parseFloat(amount),
+          };
         } catch (error) {
           set({
             isLoading: false,
             error: error.message || "Deposit failed",
           });
-          return { success: false, error: error.message };
+          return {
+            success: false,
+            error: error.message,
+          };
         }
       },
 
@@ -253,7 +242,7 @@ const useUserStore = createStore(
         try {
           set({ isLoading: true, error: null });
 
-          const { token, balance } = get();
+          const { token } = get();
           if (!token) {
             throw new Error("No authentication token");
           }
@@ -262,47 +251,49 @@ const useUserStore = createStore(
             throw new Error("Invalid withdrawal amount");
           }
 
-          if (parseFloat(amount) > balance) {
+          if (parseFloat(amount) > MOCK_BALANCE) {
             throw new Error("Insufficient funds");
           }
 
           // Mock API call delay
           await delay(1000);
 
-          const newBalance = balance - parseFloat(amount);
           const transaction = {
-            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            type: "WITHDRAWAL",
+            id: `wit_${Date.now()}`,
+            operationType: "WITHDRAWAL",
             amount: parseFloat(amount),
-            description: description || "Cash withdrawal",
-            createdAt: new Date().toISOString(),
-            newBalance: newBalance,
+            description: description || "Saque em dinheiro",
+            timestamp: new Date().toISOString(),
           };
 
-          set((state) => ({
-            balance: newBalance,
-            transactions: [transaction, ...state.transactions],
-            isLoading: false,
-          }));
+          set({ isLoading: false });
 
-          return { success: true, transaction, newBalance };
+          return {
+            success: true,
+            transaction,
+            newBalance: MOCK_BALANCE - parseFloat(amount),
+          };
         } catch (error) {
           set({
             isLoading: false,
             error: error.message || "Withdrawal failed",
           });
-          return { success: false, error: error.message };
+          return {
+            success: false,
+            error: error.message,
+          };
         }
       },
 
       // Transfer money (Payment)
       transfer: async (transferData) => {
-        const { targetAccountNumber, targetBranch, amount, description } = transferData;
+        const { targetAccountNumber, targetBranch, amount, description } =
+          transferData;
 
         try {
           set({ isLoading: true, error: null });
 
-          const { token, balance } = get();
+          const { token } = get();
           if (!token) {
             throw new Error("No authentication token");
           }
@@ -315,38 +306,40 @@ const useUserStore = createStore(
             throw new Error("Target account number and branch are required");
           }
 
-          if (parseFloat(amount) > balance) {
+          if (parseFloat(amount) > MOCK_BALANCE) {
             throw new Error("Insufficient funds");
           }
 
           // Mock API call delay
           await delay(1200);
 
-          const newBalance = balance - parseFloat(amount);
           const transaction = {
-            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            type: "PAYMENT",
+            id: `tra_${Date.now()}`,
+            operationType: "TRANSFER",
             amount: parseFloat(amount),
-            description: description || `Transfer to ${targetAccountNumber}`,
+            description:
+              description || `Transferência para conta ${targetAccountNumber}`,
             targetAccountNumber,
             targetBranch,
-            createdAt: new Date().toISOString(),
-            newBalance: newBalance,
+            timestamp: new Date().toISOString(),
           };
 
-          set((state) => ({
-            balance: newBalance,
-            transactions: [transaction, ...state.transactions],
-            isLoading: false,
-          }));
+          set({ isLoading: false });
 
-          return { success: true, transaction, newBalance };
+          return {
+            success: true,
+            transaction,
+            newBalance: MOCK_BALANCE - parseFloat(amount),
+          };
         } catch (error) {
           set({
             isLoading: false,
             error: error.message || "Transfer failed",
           });
-          return { success: false, error: error.message };
+          return {
+            success: false,
+            error: error.message,
+          };
         }
       },
 
@@ -355,7 +348,7 @@ const useUserStore = createStore(
         try {
           set({ isLoading: true, error: null });
 
-          const { token, accountNumber, branch, balance } = get();
+          const { token, accountNumber, branch } = get();
           if (!token) {
             throw new Error("No authentication token");
           }
@@ -363,35 +356,24 @@ const useUserStore = createStore(
           // Mock API call delay
           await delay(800);
 
-          // For mock purposes, return stored transactions plus some mock ones
-          const { transactions } = get();
-          const allTransactions = [...transactions, ...MOCK_TRANSACTIONS];
+          set({ isLoading: false });
 
-          // Sort by date (newest first)
-          const sortedTransactions = allTransactions.sort((a, b) => {
-            const dateA = new Date(a.createdAt || a.date);
-            const dateB = new Date(b.createdAt || b.date);
-            return dateB - dateA;
-          });
-
-          set({
-            isLoading: false,
-          });
-
-          return { 
-            success: true, 
+          return {
+            success: true,
             accountNumber,
             branch,
-            currentBalance: balance,
-            operations: sortedTransactions,
-            transactions: sortedTransactions // For backward compatibility
+            currentBalance: MOCK_BALANCE,
+            operations: MOCK_TRANSACTIONS,
           };
         } catch (error) {
           set({
             isLoading: false,
             error: error.message || "Failed to fetch statement",
           });
-          return { success: false, error: error.message };
+          return {
+            success: false,
+            error: error.message,
+          };
         }
       },
 
@@ -402,12 +384,10 @@ const useUserStore = createStore(
           name: null,
           accountNumber: null,
           branch: null,
-          balance: null,
           isAuthenticated: false,
           isAuth: false,
           isLoading: false,
           error: null,
-          transactions: [],
         });
       },
 
@@ -425,7 +405,6 @@ const useUserStore = createStore(
               name: MOCK_USER_DATA.name,
               accountNumber: MOCK_USER_DATA.accountNumber,
               branch: MOCK_USER_DATA.branch,
-              balance: MOCK_USER_DATA.balance,
               isAuthenticated: true,
               isAuth: true,
               isLoading: false,

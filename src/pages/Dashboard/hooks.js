@@ -1,9 +1,25 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUserStore } from "../../store";
 
 export const useDashboard = () => {
   const navigate = useNavigate();
-  const { name, accountNumber, branch, balance, logout } = useUserStore();
+  const { name, accountNumber, branch, getBalance, logout } = useUserStore();
+  const [balance, setBalance] = useState(0);
+  const [balanceLoading, setBalanceLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      setBalanceLoading(true);
+      const result = await getBalance();
+      if (result.success) {
+        setBalance(result.balance);
+      }
+      setBalanceLoading(false);
+    };
+
+    fetchBalance();
+  }, [getBalance]);
 
   const handleLogout = () => {
     logout();
@@ -39,6 +55,7 @@ export const useDashboard = () => {
     accountNumber,
     branch,
     balance,
+    balanceLoading,
     handleLogout,
     handleNavigateToDeposit,
     handleNavigateToWithdrawal,

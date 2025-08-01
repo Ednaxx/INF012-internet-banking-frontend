@@ -14,7 +14,7 @@ export const useStatement = () => {
 
   const loadStatement = async () => {
     const result = await getStatement();
-    
+
     if (result.success) {
       setTransactions(result.transactions || []);
     }
@@ -25,10 +25,12 @@ export const useStatement = () => {
   };
 
   const formatCurrency = (value) => {
-    return value?.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }) || "R$ 0,00";
+    return (
+      value?.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }) || "R$ 0,00"
+    );
   };
 
   const formatDate = (dateString) => {
@@ -45,7 +47,7 @@ export const useStatement = () => {
   const getTransactionTypeLabel = (type) => {
     const types = {
       DEPOSIT: "Depósito",
-      WITHDRAWAL: "Saque", 
+      WITHDRAWAL: "Saque",
       PAYMENT: "Transferência",
       deposit: "Depósito",
       withdrawal: "Saque",
@@ -69,7 +71,7 @@ export const useStatement = () => {
   };
 
   const getTransactionSign = (type) => {
-    return (type === "DEPOSIT" || type === "deposit") ? "+" : "-";
+    return type === "DEPOSIT" || type === "deposit" ? "+" : "-";
   };
 
   return {

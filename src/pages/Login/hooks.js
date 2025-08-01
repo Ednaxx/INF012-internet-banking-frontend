@@ -25,7 +25,11 @@ export const useLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.accountNumber.trim() || !formData.branch.trim() || !formData.password.trim()) {
+    if (
+      !formData.accountNumber.trim() ||
+      !formData.branch.trim() ||
+      !formData.password.trim()
+    ) {
       return;
     }
 

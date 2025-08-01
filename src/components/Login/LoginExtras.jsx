@@ -1,15 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router';
-import { FaBolt } from 'react-icons/fa';
+import React from "react";
+import { Link } from "react-router";
+import { FaBolt } from "react-icons/fa";
 
 const LoginExtras = ({ handleDemoLogin, isLoading }) => {
   return (
     <>
       <div className="mt-6 border-t border-gray-200 pt-6">
         <div className="text-center">
-          <p className="text-sm text-gray-600 mb-3">
-            Credenciais de Demo:
-          </p>
+          <p className="text-sm text-gray-600 mb-3">Credenciais de Demo:</p>
           <button
             type="button"
             onClick={handleDemoLogin}

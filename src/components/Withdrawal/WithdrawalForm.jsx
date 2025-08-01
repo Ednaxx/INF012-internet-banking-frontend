@@ -1,6 +1,6 @@
-import React from 'react';
-import { FaMinus } from 'react-icons/fa';
-import { FormInput, LoadingButton, AlertMessage } from '../shared';
+import React from "react";
+import { FaMinus } from "react-icons/fa";
+import { FormInput, LoadingButton, AlertMessage } from "../shared";
 
 const QuickAmountButton = ({ amount, onClick, disabled }) => (
   <button
@@ -13,15 +13,15 @@ const QuickAmountButton = ({ amount, onClick, disabled }) => (
   </button>
 );
 
-const WithdrawalForm = ({ 
-  amount, 
-  setAmount, 
-  description, 
-  setDescription, 
-  onSubmit, 
-  loading, 
-  error, 
-  balance 
+const WithdrawalForm = ({
+  amount,
+  setAmount,
+  description,
+  setDescription,
+  onSubmit,
+  loading,
+  error,
+  balance,
 }) => {
   const quickAmounts = [50, 100, 200, 500];
 
@@ -35,9 +35,7 @@ const WithdrawalForm = ({
         <div className="bg-red-100 p-3 rounded-lg mr-4">
           <FaMinus className="text-red-600 text-xl" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-800">
-          Realizar Saque
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-800">Realizar Saque</h2>
       </div>
 
       {error && <AlertMessage type="error" message={error} />}
@@ -55,7 +53,7 @@ const WithdrawalForm = ({
             onChange={(e) => setAmount(e.target.value)}
             required
           />
-          
+
           <div className="mt-3">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Valores Rápidos

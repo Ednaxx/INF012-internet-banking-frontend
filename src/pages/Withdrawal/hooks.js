@@ -1,14 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUserStore } from "../../store";
 
 export const useWithdrawal = () => {
   const navigate = useNavigate();
-  const { withdraw, isLoading, error, balance, formatBalance } = useUserStore();
+  const { withdraw, getBalance, isLoading, error } = useUserStore();
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [success, setSuccess] = useState(false);
   const [withdrawalResult, setWithdrawalResult] = useState(null);
+  const [balance, setBalance] = useState(0);
+  const [balanceLoading, setBalanceLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      setBalanceLoading(true);
+      const result = await getBalance();
+      if (result.success) {
+        setBalance(result.balance);
+      }
+      setBalanceLoading(false);
+    };
+
+    fetchBalance();
+  }, [getBalance]);
 
   const handleAmountChange = (e) => {
     const value = e.target.value;
@@ -28,14 +43,18 @@ export const useWithdrawal = () => {
     }
 
     const result = await withdraw(parseFloat(amount), description);
-    
+
     if (result.success) {
       setSuccess(true);
       setWithdrawalResult(result);
       setAmount("");
       setDescription("");
-      
-      // Auto-hide success message after 3 seconds
+
+      const balanceResult = await getBalance();
+      if (balanceResult.success) {
+        setBalance(balanceResult.balance);
+      }
+
       setTimeout(() => {
         setSuccess(false);
         setWithdrawalResult(null);
@@ -48,10 +67,12 @@ export const useWithdrawal = () => {
   };
 
   const formatCurrency = (value) => {
-    return value?.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }) || "R$ 0,00";
+    return (
+      value?.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      }) || "R$ 0,00"
+    );
   };
 
   const isInsufficientFunds = () => {
@@ -61,7 +82,7 @@ export const useWithdrawal = () => {
   return {
     amount,
     description,
-    isLoading,
+    isLoading: isLoading || balanceLoading,
     error,
     success,
     withdrawalResult,
@@ -71,7 +92,6 @@ export const useWithdrawal = () => {
     handleSubmit,
     handleBack,
     formatCurrency,
-    formatBalance,
     isInsufficientFunds,
   };
 };

@@ -32,7 +32,7 @@ const AppRouter = () => {
           </RouterGuard>
         }
       />
-      
+
       <Route
         path="/deposit"
         element={
@@ -41,7 +41,7 @@ const AppRouter = () => {
           </RouterGuard>
         }
       />
-      
+
       <Route
         path="/withdrawal"
         element={
@@ -50,7 +50,7 @@ const AppRouter = () => {
           </RouterGuard>
         }
       />
-      
+
       <Route
         path="/transfer"
         element={
@@ -59,7 +59,7 @@ const AppRouter = () => {
           </RouterGuard>
         }
       />
-      
+
       <Route
         path="/statement"
         element={
@@ -68,7 +68,7 @@ const AppRouter = () => {
           </RouterGuard>
         }
       />
-      
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

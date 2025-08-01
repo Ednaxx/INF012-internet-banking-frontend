@@ -1,15 +1,15 @@
-import React from 'react';
-import { FaUser, FaUniversity, FaLock } from 'react-icons/fa';
-import FormInput from '../shared/FormInput';
-import LoadingButton from '../shared/LoadingButton';
-import AlertMessage from '../shared/AlertMessage';
+import React from "react";
+import { FaUser, FaUniversity, FaLock } from "react-icons/fa";
+import FormInput from "../shared/FormInput";
+import LoadingButton from "../shared/LoadingButton";
+import AlertMessage from "../shared/AlertMessage";
 
-const LoginForm = ({ 
-  formData, 
-  isLoading, 
-  error, 
-  handleInputChange, 
-  handleSubmit 
+const LoginForm = ({
+  formData,
+  isLoading,
+  error,
+  handleInputChange,
+  handleSubmit,
 }) => {
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>

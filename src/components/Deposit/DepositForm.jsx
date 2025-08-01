@@ -1,13 +1,13 @@
-import React from 'react';
-import FormInput from '../shared/FormInput';
-import LoadingButton from '../shared/LoadingButton';
+import React from "react";
+import FormInput from "../shared/FormInput";
+import LoadingButton from "../shared/LoadingButton";
 
-const DepositForm = ({ 
-  amount, 
-  description, 
-  isLoading, 
-  handleAmountChange, 
-  setDescription, 
+const DepositForm = ({
+  amount,
+  description,
+  isLoading,
+  handleAmountChange,
+  setDescription,
   handleSubmit,
 }) => {
   return (
@@ -15,7 +15,10 @@ const DepositForm = ({
       <div className="px-4 py-5 sm:p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="amount"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Valor do Depósito
             </label>
             <div className="relative">
