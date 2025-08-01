@@ -8,6 +8,10 @@ const Dashboard = () => {
     branch,
     balance,
     handleLogout,
+    handleNavigateToDeposit,
+    handleNavigateToWithdrawal,
+    handleNavigateToTransfer,
+    handleNavigateToStatement,
     formatBalance,
   } = useDashboard();
 
@@ -70,21 +74,30 @@ const Dashboard = () => {
                 Ações Rápidas
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <button className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-center transition-colors duration-200">
+                <button 
+                  onClick={handleNavigateToDeposit}
+                  className="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-center transition-colors duration-200"
+                >
                   <div className="text-blue-600 mb-2">
                     <FaPlus className="h-8 w-8 mx-auto" />
                   </div>
                   <p className="text-sm font-medium text-blue-900">Depósito</p>
                 </button>
 
-                <button className="bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-4 text-center transition-colors duration-200">
+                <button 
+                  onClick={handleNavigateToWithdrawal}
+                  className="bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-4 text-center transition-colors duration-200"
+                >
                   <div className="text-green-600 mb-2">
                     <FaMinus className="h-8 w-8 mx-auto" />
                   </div>
                   <p className="text-sm font-medium text-green-900">Saque</p>
                 </button>
 
-                <button className="bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg p-4 text-center transition-colors duration-200">
+                <button 
+                  onClick={handleNavigateToTransfer}
+                  className="bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg p-4 text-center transition-colors duration-200"
+                >
                   <div className="text-purple-600 mb-2">
                     <FaExchangeAlt className="h-8 w-8 mx-auto" />
                   </div>
@@ -93,7 +106,10 @@ const Dashboard = () => {
                   </p>
                 </button>
 
-                <button className="bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-4 text-center transition-colors duration-200">
+                <button 
+                  onClick={handleNavigateToStatement}
+                  className="bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-4 text-center transition-colors duration-200"
+                >
                   <div className="text-gray-600 mb-2">
                     <FaFileAlt className="h-8 w-8 mx-auto" />
                   </div>

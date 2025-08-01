@@ -44,26 +44,52 @@ const Login = () => {
 
             <div>
               <label
-                htmlFor="username"
+                htmlFor="accountNumber"
                 className="block text-sm font-medium text-gray-700"
               >
-                Usuário
+                Número da Conta
               </label>
               <div className="mt-1 relative">
                 <input
-                  id="username"
-                  name="username"
+                  id="accountNumber"
+                  name="accountNumber"
                   type="text"
-                  autoComplete="username"
+                  autoComplete="accountNumber"
                   required
-                  value={formData.username}
+                  value={formData.accountNumber}
                   onChange={handleInputChange}
                   className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Digite seu usuário"
+                  placeholder="Digite o número da conta"
                   disabled={isLoading}
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   <FaUser className="h-5 w-5 text-gray-400" />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="branch"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Agência
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="branch"
+                  name="branch"
+                  type="text"
+                  autoComplete="branch"
+                  required
+                  value={formData.branch}
+                  onChange={handleInputChange}
+                  className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                  placeholder="Digite o número da agência"
+                  disabled={isLoading}
+                />
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <FaUniversity className="h-5 w-5 text-gray-400" />
                 </div>
               </div>
             </div>
@@ -99,7 +125,8 @@ const Login = () => {
                 type="submit"
                 disabled={
                   isLoading ||
-                  !formData.username.trim() ||
+                  !formData.accountNumber.trim() ||
+                  !formData.branch.trim() ||
                   !formData.password.trim()
                 }
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
@@ -126,7 +153,7 @@ const Login = () => {
                   Usar Conta Demo
                 </button>
                 <div className="mt-2 text-xs text-gray-500">
-                  Usuário: demo | Senha: password
+                  Conta: 12345678 | Agência: 001 | Senha: password
                 </div>
               </div>
             </div>

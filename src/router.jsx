@@ -3,6 +3,10 @@ import { useUserStore } from "./store";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import Deposit from "./pages/Deposit";
+import Withdrawal from "./pages/Withdrawal";
+import Transfer from "./pages/Transfer";
+import Statement from "./pages/Statement";
 
 const RouterGuard = ({ children }) => {
   const isAuth = useUserStore((state) => state.isAuth);
@@ -28,6 +32,43 @@ const AppRouter = () => {
           </RouterGuard>
         }
       />
+      
+      <Route
+        path="/deposit"
+        element={
+          <RouterGuard>
+            <Deposit />
+          </RouterGuard>
+        }
+      />
+      
+      <Route
+        path="/withdrawal"
+        element={
+          <RouterGuard>
+            <Withdrawal />
+          </RouterGuard>
+        }
+      />
+      
+      <Route
+        path="/transfer"
+        element={
+          <RouterGuard>
+            <Transfer />
+          </RouterGuard>
+        }
+      />
+      
+      <Route
+        path="/statement"
+        element={
+          <RouterGuard>
+            <Statement />
+          </RouterGuard>
+        }
+      />
+      
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

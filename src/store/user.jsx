@@ -3,36 +3,36 @@ import { createStore } from "./util";
 
 // Mock data for demo purposes
 const MOCK_USER_DATA = {
-  username: "john.doe",
-  accountNumber: "1234567890",
-  branch: "Main Branch - Downtown",
-  balance: 15420.5,
+  name: "João Silva Santos",
+  accountNumber: "12345678",
+  branch: "001",
+  balance: 15420.50,
 };
 
 const MOCK_TRANSACTIONS = [
   {
-    id: "1",
-    type: "deposit",
+    id: "123e4567-e89b-12d3-a456-426614174001",
+    type: "DEPOSIT",
     amount: 500.0,
-    date: "2025-07-28T10:30:00Z",
-    description: "Cash deposit at ATM",
-    balance: 15420.5,
+    description: "Salary deposit",
+    createdAt: "2025-07-28T10:30:00",
+    newBalance: 15420.5,
   },
   {
-    id: "2",
-    type: "withdrawal",
+    id: "123e4567-e89b-12d3-a456-426614174002",
+    type: "WITHDRAWAL",
     amount: 200.0,
-    date: "2025-07-27T14:15:00Z",
     description: "ATM withdrawal",
-    balance: 14920.5,
+    createdAt: "2025-07-27T14:15:00",
+    newBalance: 14920.5,
   },
   {
-    id: "3",
-    type: "transfer",
+    id: "123e4567-e89b-12d3-a456-426614174003",
+    type: "PAYMENT",
     amount: 1000.0,
-    date: "2025-07-26T09:45:00Z",
     description: "Transfer to John Smith",
-    balance: 15120.5,
+    createdAt: "2025-07-26T09:45:00",
+    newBalance: 15120.5,
   },
 ];
 
@@ -45,7 +45,7 @@ const useUserStore = createStore(
     return {
       // State
       token: null,
-      username: null,
+      name: null,
       accountNumber: null,
       branch: null,
       balance: null,
@@ -62,7 +62,7 @@ const useUserStore = createStore(
 
       // Authentication API
       authenticate: async (credentials) => {
-        const { username, password } = credentials;
+        const { accountNumber, branch, password } = credentials;
 
         try {
           set({ isLoading: true, error: null });
@@ -71,13 +71,13 @@ const useUserStore = createStore(
           await delay(800);
 
           // Mock authentication - in real app, this would be a POST to /auth/login
-          if (username && password) {
+          if (accountNumber && branch && password) {
             // Simulate successful login
             const mockToken = `jwt-token-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
             set({
               token: mockToken,
-              username: MOCK_USER_DATA.username,
+              name: MOCK_USER_DATA.name,
               accountNumber: MOCK_USER_DATA.accountNumber,
               branch: MOCK_USER_DATA.branch,
               balance: MOCK_USER_DATA.balance,
@@ -104,7 +104,7 @@ const useUserStore = createStore(
 
       // Signup API
       signup: async (signupData) => {
-        const { username, password, email, fullName, cpf, phone } = signupData;
+        const { name, cpf, email, password } = signupData;
 
         try {
           set({ isLoading: true, error: null });
@@ -113,7 +113,7 @@ const useUserStore = createStore(
           await delay(1000);
 
           // Mock validation
-          if (!username || !password || !email || !fullName || !cpf) {
+          if (!name || !password || !email || !cpf) {
             throw new Error(
               "Todos os campos obrigatórios devem ser preenchidos",
             );
@@ -136,23 +136,22 @@ const useUserStore = createStore(
 
           // Simulate successful signup
           const mockAccountNumber =
-            Math.floor(Math.random() * 9000000000) + 1000000000;
+            Math.floor(Math.random() * 90000000) + 10000000;
+          const mockBranch = String(Math.floor(Math.random() * 999) + 1).padStart(3, '0');
           const mockToken = `jwt-token-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
           const newUserData = {
-            username,
+            name,
             email,
-            fullName,
             accountNumber: mockAccountNumber.toString(),
-            branch: "Agência Principal - Centro",
+            branch: mockBranch,
             balance: 0.0,
             cpf,
-            phone,
           };
 
           set({
             token: mockToken,
-            username: newUserData.username,
+            name: newUserData.name,
             accountNumber: newUserData.accountNumber,
             branch: newUserData.branch,
             balance: newUserData.balance,
@@ -207,7 +206,7 @@ const useUserStore = createStore(
       },
 
       // Deposit money
-      deposit: async (amount) => {
+      deposit: async (amount, description = null) => {
         try {
           set({ isLoading: true, error: null });
 
@@ -225,12 +224,12 @@ const useUserStore = createStore(
 
           const newBalance = balance + parseFloat(amount);
           const transaction = {
-            id: Date.now().toString(),
-            type: "deposit",
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            type: "DEPOSIT",
             amount: parseFloat(amount),
-            date: new Date().toISOString(),
-            description: `Cash deposit`,
-            balance: newBalance,
+            description: description || "Cash deposit",
+            createdAt: new Date().toISOString(),
+            newBalance: newBalance,
           };
 
           set((state) => ({
@@ -250,7 +249,7 @@ const useUserStore = createStore(
       },
 
       // Withdraw money
-      withdraw: async (amount) => {
+      withdraw: async (amount, description = null) => {
         try {
           set({ isLoading: true, error: null });
 
@@ -272,12 +271,12 @@ const useUserStore = createStore(
 
           const newBalance = balance - parseFloat(amount);
           const transaction = {
-            id: Date.now().toString(),
-            type: "withdrawal",
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            type: "WITHDRAWAL",
             amount: parseFloat(amount),
-            date: new Date().toISOString(),
-            description: `Cash withdrawal`,
-            balance: newBalance,
+            description: description || "Cash withdrawal",
+            createdAt: new Date().toISOString(),
+            newBalance: newBalance,
           };
 
           set((state) => ({
@@ -296,9 +295,9 @@ const useUserStore = createStore(
         }
       },
 
-      // Transfer money
+      // Transfer money (Payment)
       transfer: async (transferData) => {
-        const { recipientAccount, amount, description } = transferData;
+        const { targetAccountNumber, targetBranch, amount, description } = transferData;
 
         try {
           set({ isLoading: true, error: null });
@@ -312,8 +311,8 @@ const useUserStore = createStore(
             throw new Error("Invalid transfer amount");
           }
 
-          if (!recipientAccount) {
-            throw new Error("Recipient account number is required");
+          if (!targetAccountNumber || !targetBranch) {
+            throw new Error("Target account number and branch are required");
           }
 
           if (parseFloat(amount) > balance) {
@@ -325,13 +324,14 @@ const useUserStore = createStore(
 
           const newBalance = balance - parseFloat(amount);
           const transaction = {
-            id: Date.now().toString(),
-            type: "transfer",
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            type: "PAYMENT",
             amount: parseFloat(amount),
-            date: new Date().toISOString(),
-            description: description || `Transfer to ${recipientAccount}`,
-            recipientAccount,
-            balance: newBalance,
+            description: description || `Transfer to ${targetAccountNumber}`,
+            targetAccountNumber,
+            targetBranch,
+            createdAt: new Date().toISOString(),
+            newBalance: newBalance,
           };
 
           set((state) => ({
@@ -351,11 +351,11 @@ const useUserStore = createStore(
       },
 
       // Get account statement
-      getStatement: async (dateRange) => {
+      getStatement: async () => {
         try {
           set({ isLoading: true, error: null });
 
-          const { token } = get();
+          const { token, accountNumber, branch, balance } = get();
           if (!token) {
             throw new Error("No authentication token");
           }
@@ -367,24 +367,25 @@ const useUserStore = createStore(
           const { transactions } = get();
           const allTransactions = [...transactions, ...MOCK_TRANSACTIONS];
 
-          // Filter by date range if provided
-          let filteredTransactions = allTransactions;
-          if (dateRange?.startDate && dateRange?.endDate) {
-            const start = new Date(dateRange.startDate);
-            const end = new Date(dateRange.endDate);
-
-            filteredTransactions = allTransactions.filter((transaction) => {
-              const transactionDate = new Date(transaction.date);
-              return transactionDate >= start && transactionDate <= end;
-            });
-          }
+          // Sort by date (newest first)
+          const sortedTransactions = allTransactions.sort((a, b) => {
+            const dateA = new Date(a.createdAt || a.date);
+            const dateB = new Date(b.createdAt || b.date);
+            return dateB - dateA;
+          });
 
           set({
-            transactions: filteredTransactions,
             isLoading: false,
           });
 
-          return { success: true, transactions: filteredTransactions };
+          return { 
+            success: true, 
+            accountNumber,
+            branch,
+            currentBalance: balance,
+            operations: sortedTransactions,
+            transactions: sortedTransactions // For backward compatibility
+          };
         } catch (error) {
           set({
             isLoading: false,
@@ -398,7 +399,7 @@ const useUserStore = createStore(
       logout: () => {
         set({
           token: null,
-          username: null,
+          name: null,
           accountNumber: null,
           branch: null,
           balance: null,
@@ -421,7 +422,7 @@ const useUserStore = createStore(
             await delay(500);
 
             set({
-              username: MOCK_USER_DATA.username,
+              name: MOCK_USER_DATA.name,
               accountNumber: MOCK_USER_DATA.accountNumber,
               branch: MOCK_USER_DATA.branch,
               balance: MOCK_USER_DATA.balance,

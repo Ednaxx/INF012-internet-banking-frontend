@@ -3,7 +3,8 @@ import { useUserStore } from "../../store";
 
 export const useLogin = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    accountNumber: "",
+    branch: "",
     password: "",
   });
 
@@ -24,7 +25,7 @@ export const useLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.username.trim() || !formData.password.trim()) {
+    if (!formData.accountNumber.trim() || !formData.branch.trim() || !formData.password.trim()) {
       return;
     }
 
@@ -37,7 +38,8 @@ export const useLogin = () => {
 
   const handleDemoLogin = () => {
     setFormData({
-      username: "demo",
+      accountNumber: "12345678",
+      branch: "001",
       password: "password",
     });
   };

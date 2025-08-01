@@ -3,13 +3,11 @@ import { useUserStore } from "../../store";
 
 export const useSignup = () => {
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
-    username: "",
     password: "",
     confirmPassword: "",
     cpf: "",
-    phone: "",
   });
 
   const { signup, isLoading, error, isAuth, clearError } = useUserStore();
@@ -20,8 +18,6 @@ export const useSignup = () => {
     let formattedValue = value;
     if (name === "cpf") {
       formattedValue = formatCPF(value);
-    } else if (name === "phone") {
-      formattedValue = formatPhone(value);
     }
 
     setFormData((prev) => ({
@@ -38,9 +34,8 @@ export const useSignup = () => {
     e.preventDefault();
 
     if (
-      !formData.fullName.trim() ||
+      !formData.name.trim() ||
       !formData.email.trim() ||
-      !formData.username.trim() ||
       !formData.password.trim() ||
       !formData.confirmPassword.trim() ||
       !formData.cpf.trim()
@@ -58,7 +53,6 @@ export const useSignup = () => {
     const cleanData = {
       ...formData,
       cpf: formData.cpf.replace(/\D/g, ""),
-      phone: formData.phone.replace(/\D/g, ""),
     };
 
     const result = await signup(cleanData);
