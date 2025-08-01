@@ -1,5 +1,4 @@
 import React from "react";
-import { Navigate } from "react-router";
 import { useWithdrawal } from "./hooks";
 import { PageHeader, BalanceCard, AlertMessage } from "../../components/shared";
 import { WithdrawalForm } from "../../components/Withdrawal";

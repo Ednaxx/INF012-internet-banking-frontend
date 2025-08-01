@@ -76,14 +76,6 @@ export const useSignup = () => {
       .slice(0, 14);
   };
 
-  const formatPhone = (value) => {
-    const numbers = value.replace(/\D/g, "");
-    return numbers
-      .replace(/(\d{2})(\d)/, "($1) $2")
-      .replace(/(\d{5})(\d{1,4})/, "$1-$2")
-      .slice(0, 15);
-  };
-
   return {
     formData,
     isLoading,

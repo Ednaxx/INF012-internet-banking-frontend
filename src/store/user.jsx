@@ -344,7 +344,7 @@ const useUserStore = createStore(
               isAuth: true,
               isLoading: false,
             });
-          } catch (error) {
+          } catch {
             get().logout();
             set({ isLoading: false });
           }

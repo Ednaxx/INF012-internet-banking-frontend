@@ -16,7 +16,6 @@ const Transfer = () => {
     handleBack,
     formatCurrency,
     isInsufficientFunds,
-    isValidForm,
   } = useTransfer();
 
   return (

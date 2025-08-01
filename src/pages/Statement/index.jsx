@@ -11,9 +11,6 @@ const Statement = () => {
     handleBack,
     formatCurrency,
     formatDate,
-    getTransactionTypeLabel,
-    getTransactionColor,
-    getTransactionSign,
   } = useStatement();
 
   return (
