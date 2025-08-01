@@ -1,3 +1,4 @@
+import React from 'react';
 import { Navigate, Link } from 'react-router';
 import { FaUniversity, FaExclamationCircle } from 'react-icons/fa';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';

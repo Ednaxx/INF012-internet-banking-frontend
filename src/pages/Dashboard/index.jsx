@@ -1,3 +1,4 @@
+import React from 'react';
 import { FaUniversity, FaPlus, FaMinus, FaExchangeAlt, FaFileAlt } from 'react-icons/fa';
 import { useDashboard } from "./hooks";
 
