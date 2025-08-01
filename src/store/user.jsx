@@ -240,7 +240,8 @@ const useUserStore = createStore(
           }
 
           const response = await api.post("/accounts/payment", {
-            receiverUsername: `${targetBranch}-${targetAccountNumber}`,
+            targetBranch,
+            targetAccountNumber,
             amount: parseFloat(amount),
             description:
               description || `Transferência para conta ${targetAccountNumber}`,
@@ -299,7 +300,8 @@ const useUserStore = createStore(
               amount: op.amount,
               description: op.description,
               timestamp: op.createdAt,
-              receiverUsername: op.receiverUsername,
+              targetAccountNumber: op.targetAccountNumber,
+              targetBranch: op.targetBranch,
             })),
           };
         } catch (error) {

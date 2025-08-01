@@ -21,7 +21,7 @@ const TransactionItem = ({ transaction, formatCurrency, formatDate }) => {
         return "Depósito";
       case "WITHDRAWAL":
         return "Saque";
-      case "TRANSFER":
+      case "PAYMENT":
         return "Transferência";
       default:
         return "Operação";

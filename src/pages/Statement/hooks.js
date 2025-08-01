@@ -8,7 +8,6 @@ export const useStatement = () => {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    // Load statement on component mount
     loadStatement();
   }, []);
 
@@ -16,7 +15,7 @@ export const useStatement = () => {
     const result = await getStatement();
 
     if (result.success) {
-      setTransactions(result.transactions || []);
+      setTransactions(result.operations || []);
     }
   };
 
